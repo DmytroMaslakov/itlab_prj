@@ -38,7 +38,26 @@ class QueryBuilder
         return $this;
     }
 
+    public function insertInto(string $table)
+    {
+        $this->type = "insert";
+        $this->table = $table;
+        return $this;
+    }
 
+    public function values(array $values)
+    {
+        $value_parts = [];
+        $cols = [];
+        foreach ($values as $key => $value) {
+            $value_parts [] = ":{$key}";
+            $cols []= $key;
+            $this->params[$key] = $value;
+        }
+        $this->fields = implode(', ', $cols);
+        $this->values = implode(', ', $value_parts);
+        return $this;
+    }
 
     public function set($set)
     {
@@ -87,8 +106,8 @@ class QueryBuilder
                     $sql .= " WHERE {$this->where}";
                 return $sql;
             case 'insert':
-                $cols = $this->fields??"";
-                return "INSERT INTO {$this->table} ({$cols}) VALUES ({$this->values})";
+                $cols = '(' . $this->fields . ')' ?? "";
+                return "INSERT INTO {$this->table} {$cols} VALUES ({$this->values})";
         }
 
     }
