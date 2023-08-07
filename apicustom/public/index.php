@@ -14,8 +14,9 @@ echo "<pre>";
 
 $database->connect();
 $query = new QueryBuilder();
-$query->insertInto('news')
-    ->values(['title' => 'new title', 'text' => 'new text', 'date' => date("Y-m-d H:i:s")]);
+$query->delete()
+    ->from('news')
+    ->where(['id' => 30]);
 $rows = $database->execute($query);
 var_dump($rows);
 

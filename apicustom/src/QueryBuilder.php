@@ -51,7 +51,7 @@ class QueryBuilder
         $cols = [];
         foreach ($values as $key => $value) {
             $value_parts [] = ":{$key}";
-            $cols []= $key;
+            $cols [] = $key;
             $this->params[$key] = $value;
         }
         $this->fields = implode(', ', $cols);
@@ -92,6 +92,12 @@ class QueryBuilder
         return $this;
     }
 
+    public function delete()
+    {
+        $this->type = "delete";
+        return $this;
+    }
+
     public function getSql()
     {
         switch ($this->type) {
@@ -108,6 +114,8 @@ class QueryBuilder
             case 'insert':
                 $cols = '(' . $this->fields . ')' ?? "";
                 return "INSERT INTO {$this->table} {$cols} VALUES ({$this->values})";
+            case 'delete':
+                return "DELETE FROM {$this->table} WHERE {$this->where}";
         }
 
     }
