@@ -31,7 +31,31 @@ class QueryBuilder
         return $this;
     }
 
+    public function update($table)
+    {
+        $this->type = "update";
+        $this->table = $table;
+        return $this;
+    }
 
+
+
+    public function set($set)
+    {
+        $set_parts = [];
+        foreach ($set as $key => $value) {
+            $set_parts [] = "{$key} = :{$key}";
+            $this->params[$key] = $value;
+        }
+        $this->set = implode(', ', $set_parts);
+        return $this;
+    }
+
+    public function from($table)
+    {
+        $this->table = $table;
+        return $this;
+    }
 
     public function where($where): QueryBuilder
     {

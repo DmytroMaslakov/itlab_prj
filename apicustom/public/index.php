@@ -14,8 +14,9 @@ echo "<pre>";
 
 $database->connect();
 $query = new QueryBuilder();
-$query->insertInto('news', ['title', 'text'])
-    ->values(['NEWTITLE', ['NEWTEXT']]);
+$query->update('news')
+    ->set(['title'=>'updatedTitle'])
+    ->where(['id'=>1]);
 $rows = $database->execute($query);
 var_dump($rows);
 
