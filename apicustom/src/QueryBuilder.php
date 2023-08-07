@@ -15,6 +15,10 @@ class QueryBuilder
     protected $params;
     protected $values;
 
+    protected $joinTable;
+    protected $joinType;
+    protected $on;
+
     public function __construct()
     {
         $this->params = [];
@@ -98,11 +102,30 @@ class QueryBuilder
         return $this;
     }
 
+
+    public function innerJoin($joinTable){
+        $this->joinType = 'inner';
+        $this->joinTable = $joinTable;
+        return $this;
+    }
+
+    public function on($currentTableCol, $joinedTableCol){
+        $this->on = "{$this->table}.{$currentTableCol} = {$this->joinTable}.$joinedTableCol";
+        return $this;
+    }
+
     public function getSql()
     {
         switch ($this->type) {
             case 'select':
                 $sql = "SELECT {$this->fields} FROM {$this->table}";
+                if(!empty($this->joinTable)){
+                    switch ($this->joinType){
+                        case 'inner':
+                            $sql .= " INNER JOIN {$this->joinTable} ON {$this->on}";
+                            break;
+                    }
+                }
                 if (!empty($this->where))
                     $sql .= " WHERE {$this->where}";
                 return $sql;

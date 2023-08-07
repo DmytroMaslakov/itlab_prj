@@ -14,9 +14,15 @@ echo "<pre>";
 
 $database->connect();
 $query = new QueryBuilder();
-$query->delete()
+$query->select('name')
     ->from('news')
-    ->where(['id' => 30]);
+    ->innerJoin('user')
+    ->on('user_id', 'id')
+    ->where(['user_id' => 1]);
+/*$query->insertInto('news')
+    ->values(['title'=>'new', 'text'=>'newnewnew', 'date' => date('Y-m-d H:i:s'), 'user_id'=> 1]);*/
+
+
 $rows = $database->execute($query);
 var_dump($rows);
 
