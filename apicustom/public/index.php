@@ -16,7 +16,7 @@ $database->connect();
 $query = new QueryBuilder();
 $query->select('name')
     ->from('news')
-    ->innerJoin('user')
+    ->leftJoin('user')
     ->on('user_id', 'id')
     ->where(['user_id' => 1]);
 /*$query->insertInto('news')

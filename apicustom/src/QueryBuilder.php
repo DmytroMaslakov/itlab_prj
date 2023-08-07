@@ -109,6 +109,17 @@ class QueryBuilder
         return $this;
     }
 
+    public function rightJoin($joinTable){
+        $this->joinType = "right";
+        $this->joinTable = $joinTable;
+        return $this;
+    }
+
+    public function leftJoin($joinTable){
+        $this->joinType = 'left';
+        $this->joinTable = $joinTable;
+        return $this;
+    }
     public function on($currentTableCol, $joinedTableCol){
         $this->on = "{$this->table}.{$currentTableCol} = {$this->joinTable}.$joinedTableCol";
         return $this;
@@ -122,9 +133,14 @@ class QueryBuilder
                 if(!empty($this->joinTable)){
                     switch ($this->joinType){
                         case 'inner':
-                            $sql .= " INNER JOIN {$this->joinTable} ON {$this->on}";
+                            $sql .= " INNER ";
                             break;
+                        case 'right':
+                            $sql .= " RIGHT ";
+                        case 'left':
+                            $sql .= " LEFT ";
                     }
+                    $sql .= "JOIN {$this->joinTable} ON {$this->on}";
                 }
                 if (!empty($this->where))
                     $sql .= " WHERE {$this->where}";
