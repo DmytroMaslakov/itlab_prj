@@ -137,8 +137,10 @@ class QueryBuilder
                             break;
                         case 'right':
                             $sql .= " RIGHT ";
+                            break;
                         case 'left':
                             $sql .= " LEFT ";
+                            break;
                     }
                     $sql .= "JOIN {$this->joinTable} ON {$this->on}";
                 }
