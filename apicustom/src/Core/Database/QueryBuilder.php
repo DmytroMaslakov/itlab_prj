@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Core\Database;
 class QueryBuilder
 {
 
@@ -24,7 +25,7 @@ class QueryBuilder
         $this->params = [];
     }
 
-    public function select($fields = '*')
+    public function select($fields = '*') : self
     {
         $this->type = "select";
         $fields_string = $fields;
@@ -35,21 +36,21 @@ class QueryBuilder
         return $this;
     }
 
-    public function update($table)
+    public function update($table) : self
     {
         $this->type = "update";
         $this->table = $table;
         return $this;
     }
 
-    public function insertInto(string $table)
+    public function insertInto(string $table) : self
     {
         $this->type = "insert";
         $this->table = $table;
         return $this;
     }
 
-    public function values(array $values)
+    public function values(array $values) : self
     {
         $value_parts = [];
         $cols = [];
@@ -63,7 +64,7 @@ class QueryBuilder
         return $this;
     }
 
-    public function set($set)
+    public function set($set) : self
     {
         $set_parts = [];
         foreach ($set as $key => $value) {
@@ -74,13 +75,13 @@ class QueryBuilder
         return $this;
     }
 
-    public function from($table)
+    public function from($table) : self
     {
         $this->table = $table;
         return $this;
     }
 
-    public function where($where): QueryBuilder
+    public function where($where): self
     {
         /* if(is_a($where)){
 
@@ -103,24 +104,29 @@ class QueryBuilder
     }
 
 
-    public function innerJoin($joinTable){
+    public function innerJoin($joinTable)
+    {
         $this->joinType = 'inner';
         $this->joinTable = $joinTable;
         return $this;
     }
 
-    public function rightJoin($joinTable){
+    public function rightJoin($joinTable)
+    {
         $this->joinType = "right";
         $this->joinTable = $joinTable;
         return $this;
     }
 
-    public function leftJoin($joinTable){
+    public function leftJoin($joinTable)
+    {
         $this->joinType = 'left';
         $this->joinTable = $joinTable;
         return $this;
     }
-    public function on($currentTableCol, $joinedTableCol){
+
+    public function on($currentTableCol, $joinedTableCol)
+    {
         $this->on = "{$this->table}.{$currentTableCol} = {$this->joinTable}.$joinedTableCol";
         return $this;
     }
@@ -130,8 +136,8 @@ class QueryBuilder
         switch ($this->type) {
             case 'select':
                 $sql = "SELECT {$this->fields} FROM {$this->table}";
-                if(!empty($this->joinTable)){
-                    switch ($this->joinType){
+                if (!empty($this->joinTable)) {
+                    switch ($this->joinType) {
                         case 'inner':
                             $sql .= " INNER ";
                             break;

@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Core\Database;
+
+use Database\PDO;
+
 class Database
 {
     protected $host;
@@ -7,7 +11,7 @@ class Database
     protected $username;
     protected $dbname;
 
-    protected PDO $pdo;
+    protected \PDO $pdo;
 
     public function __construct($host, $username, $password, $dbname)
     {
@@ -15,6 +19,10 @@ class Database
         $this->username = $username;
         $this->password = $password;
         $this->dbname = $dbname;
+    }
+    public function __destruct()
+    {
+        unset($this->pdo);
     }
 
     public function getConnectionString()
@@ -24,7 +32,7 @@ class Database
 
     public function connect()
     {
-        $this->pdo = new PDO($this->getConnectionString(), $this->username, $this->password);
+        $this->pdo = new \PDO($this->getConnectionString(), $this->username, $this->password);
     }
 
     public function getPDO()
