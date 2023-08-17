@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
@@ -25,24 +26,15 @@ class Product implements JsonSerializable
     private ?string $description = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "products")]
-    private Category $category;
+    private ?Category $category = null;
 
-    /**
-     * @return Category
-     */
-    public function getCategory(): Category
-    {
-        return $this->category;
-    }
+    #[ORM\OneToOne(targetEntity: ProductInfo::class)]
+    private ?ProductInfo $productInfo = null;
 
-    /**
-     * @param Category $category
-     * @return void
-     */
-    public function setCategory(Category $category): void
-    {
-        $this->category = $category;
-    }
+    #[ORM\ManyToMany(targetEntity: Test::class)]
+    private Collection $test;
+
+
 
     /**
      * @return int|null
@@ -64,7 +56,7 @@ class Product implements JsonSerializable
      * @param string $name
      * @return $this
      */
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -83,7 +75,7 @@ class Product implements JsonSerializable
      * @param string $price
      * @return $this
      */
-    public function setPrice(string $price): static
+    public function setPrice(string $price): self
     {
         $this->price = $price;
 
@@ -102,7 +94,7 @@ class Product implements JsonSerializable
      * @param string|null $description
      * @return $this
      */
-    public function setDescription(?string $description): static
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -115,9 +107,70 @@ class Product implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            "id" => $this->getId(),
             "name" => $this->getName(),
             "price" => $this->getPrice(),
-            "description" => $this->getDescription()
+            "description" => $this->getDescription(),
+            "category" => $this->getCategory()
         ];
     }
+
+
+
+    /**
+     * @return Collection
+     */
+    public function getTest(): Collection
+    {
+        return $this->test;
+    }
+
+    /**
+     * @param Collection $test
+     * @return $this
+     */
+    public function setTest(Collection $test): self
+    {
+        $this->test = $test;
+        return $this;
+    }
+
+    /**
+     * @return ProductInfo|null
+     */
+    public function getProductInfo(): ?ProductInfo
+    {
+        return $this->productInfo;
+    }
+
+    /**
+     * @param ProductInfo|null $productInfo
+     * @return $this
+     */
+    public function setProductInfo(?ProductInfo $productInfo): self
+    {
+        $this->productInfo = $productInfo;
+        return $this;
+    }
+
+    /**
+     * @return Category|null
+     */
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Category|null $category
+     * @return $this
+     */
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+
 }
