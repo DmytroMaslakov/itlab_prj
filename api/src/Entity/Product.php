@@ -24,6 +24,26 @@ class Product implements JsonSerializable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "products")]
+    private Category $category;
+
+    /**
+     * @return Category
+     */
+    public function getCategory(): Category
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Category $category
+     * @return void
+     */
+    public function setCategory(Category $category): void
+    {
+        $this->category = $category;
+    }
+
     /**
      * @return int|null
      */
