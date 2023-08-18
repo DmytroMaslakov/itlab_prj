@@ -19,16 +19,26 @@ class Customer
     #[ORM\Column(length: 255)]
     private ?string $surname = null;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -36,12 +46,19 @@ class Customer
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getSurname(): ?string
     {
         return $this->surname;
     }
 
-    public function setSurname(string $surname): static
+    /**
+     * @param string|null $surname
+     * @return $this
+     */
+    public function setSurname(?string $surname): self
     {
         $this->surname = $surname;
 
