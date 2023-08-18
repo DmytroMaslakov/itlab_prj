@@ -16,20 +16,32 @@ class Floor
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): static
+    /**
+     * @param string|null $name
+     * @return $this
+     */
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
+
 }
+

@@ -22,16 +22,26 @@ class Staff
     #[ORM\Column(length: 255)]
     private ?string $position = null;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -39,27 +49,43 @@ class Staff
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getSurname(): ?string
     {
         return $this->surname;
     }
 
-    public function setSurname(string $surname): static
+    /**
+     * @param string|null $surname
+     * @return $this
+     */
+    public function setSurname(?string $surname): self
     {
         $this->surname = $surname;
 
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getPosition(): ?string
     {
         return $this->position;
     }
 
-    public function setPosition(string $position): static
+    /**
+     * @param string|null $position
+     * @return $this
+     */
+    public function setPosition(?string $position): self
     {
         $this->position = $position;
 
         return $this;
     }
+
+
 }
