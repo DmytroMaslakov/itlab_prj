@@ -5,9 +5,10 @@ namespace App\Entity;
 use App\Repository\FloorRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: FloorRepository::class)]
-class Floor
+class Floor implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,6 +23,9 @@ class Floor
 
     #[ORM\OneToMany(mappedBy: 'floor', targetEntity: Staff::class)]
     private Collection $staff;
+
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
 
     /**
      * @return int|null
@@ -88,5 +92,35 @@ class Floor
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string|null $description
+     * @return $this
+     */
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize() : array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description
+        ];
+    }
 }
 

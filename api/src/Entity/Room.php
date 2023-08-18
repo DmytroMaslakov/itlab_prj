@@ -6,9 +6,10 @@ use App\Repository\RoomRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
-class Room
+class Room implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -111,4 +112,17 @@ class Room
         return $this;
     }
 
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize() : array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'category' => $this->category,
+            'floor' => $this->floor
+        ];
+    }
 }

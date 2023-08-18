@@ -7,9 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-class Category
+class Category implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -95,5 +96,17 @@ class Category
         $this->rooms = $rooms;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize():array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'price' => $this->price
+        ];
     }
 }

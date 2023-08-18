@@ -4,9 +4,10 @@ namespace App\Entity;
 
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
-class Customer
+class Customer implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -85,5 +86,18 @@ class Customer
         $this->room = $room;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize() : array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'surname' => $this->surname,
+            'room' => $this->room
+        ];
     }
 }
