@@ -20,6 +20,9 @@ class Floor
     #[ORM\OneToMany(mappedBy: 'floor', targetEntity: Room::class)]
     private Collection $rooms;
 
+    #[ORM\OneToMany(mappedBy: 'floor', targetEntity: Staff::class)]
+    private Collection $staff;
+
     /**
      * @return int|null
      */
@@ -62,6 +65,25 @@ class Floor
     public function setRooms(Collection $rooms): self
     {
         $this->rooms = $rooms;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getStaff(): Collection
+    {
+        return $this->staff;
+    }
+
+    /**
+     * @param Collection $staff
+     * @return $this
+     */
+    public function setStaff(Collection $staff): self
+    {
+        $this->staff = $staff;
 
         return $this;
     }

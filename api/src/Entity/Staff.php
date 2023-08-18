@@ -22,6 +22,9 @@ class Staff
     #[ORM\Column(length: 255)]
     private ?string $position = null;
 
+    #[ORM\ManyToOne(targetEntity: Floor::class, inversedBy: 'staff')]
+    private ?Floor $floor = null;
+
     /**
      * @return int|null
      */
@@ -83,6 +86,25 @@ class Staff
     public function setPosition(?string $position): self
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return Floor|null
+     */
+    public function getFloor(): ?Floor
+    {
+        return $this->floor;
+    }
+
+    /**
+     * @param Floor|null $floor
+     * @return $this
+     */
+    public function setFloor(?Floor $floor): self
+    {
+        $this->floor = $floor;
 
         return $this;
     }
