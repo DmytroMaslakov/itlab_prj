@@ -19,6 +19,9 @@ class Customer
     #[ORM\Column(length: 255)]
     private ?string $surname = null;
 
+    #[ORM\ManyToOne(targetEntity: Room::class, inversedBy: 'customers')]
+    private ?Room $room = null;
+
     /**
      * @return int|null
      */
@@ -61,6 +64,25 @@ class Customer
     public function setSurname(?string $surname): self
     {
         $this->surname = $surname;
+
+        return $this;
+    }
+
+    /**
+     * @return Room|null
+     */
+    public function getRoom(): ?Room
+    {
+        return $this->room;
+    }
+
+    /**
+     * @param Room|null $room
+     * @return $this
+     */
+    public function setRoom(?Room $room): self
+    {
+        $this->room = $room;
 
         return $this;
     }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RoomRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,6 +23,9 @@ class Room
 
     #[ORM\ManyToOne(targetEntity: Floor::class, inversedBy: 'rooms')]
     private ?Floor $floor = null;
+
+    #[ORM\OneToMany(mappedBy: 'room', targetEntity: Customer::class)]
+    private Collection $customers;
 
     /**
      * @return int|null
@@ -84,6 +88,25 @@ class Room
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCustomers(): Collection
+    {
+        return $this->customers;
+    }
+
+    /**
+     * @param Collection $customers
+     * @return $this
+     */
+    public function setCustomers(Collection $customers): self
+    {
+        $this->customers = $customers;
 
         return $this;
     }
