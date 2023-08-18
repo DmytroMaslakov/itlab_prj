@@ -20,6 +20,8 @@ class Room
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'rooms')]
     private ?Category $category = null;
 
+    #[ORM\ManyToOne(targetEntity: Floor::class, inversedBy: 'rooms')]
+    private ?Floor $floor = null;
 
     /**
      * @return int|null
@@ -44,6 +46,44 @@ class Room
     public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Floor|null
+     */
+    public function getFloor(): ?Floor
+    {
+        return $this->floor;
+    }
+
+    /**
+     * @param Floor|null $floor
+     * @return $this
+     */
+    public function setFloor(?Floor $floor): self
+    {
+        $this->floor = $floor;
+
+        return $this;
+    }
+
+    /**
+     * @return Category|null
+     */
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Category|null $category
+     * @return $this
+     */
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
