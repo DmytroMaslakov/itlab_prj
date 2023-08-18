@@ -38,7 +38,7 @@ class TestController extends AbstractController
     public function test(Request $request): JsonResponse
     {
 
-        $products = $this->entityManager->getRepository(Product::class)->findAll();
+        $products = $this->entityManager->getRepository(Product::class)->getAllProductsByName("test1");
 
 
         return new JsonResponse($products);
