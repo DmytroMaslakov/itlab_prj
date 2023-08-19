@@ -21,6 +21,7 @@ class Category implements JsonSerializable
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
+
     #[ORM\OneToMany(mappedBy: "category", targetEntity: Product::class)]
     private Collection $products;
 
@@ -71,7 +72,7 @@ class Category implements JsonSerializable
      * @param string $type
      * @return $this
      */
-    public function setType(string $type): static
+    public function setType(string $type): self
     {
         $this->type = $type;
 

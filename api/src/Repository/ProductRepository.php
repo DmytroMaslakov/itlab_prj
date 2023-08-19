@@ -25,14 +25,26 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $name
+     * @param int $itemsPerPage
+     * @param int $page
+     * @param string|null $name
+     * @param string|null $categoryName
      * @return float|int|mixed|string
      */
-    public function getAllProductsByName(string $name)
+    public function getAllProductsByName(int $itemsPerPage, int $page, ?string $name = null, ?string $categoryName = null): mixed
     {
         return $this->createQueryBuilder("product")
+            ->join('product.category','category')
+
+            ->andWhere('category.name LIKE :categoryName')
+            ->setParameter("categoryName", "%" . $categoryName . "%")
+
             ->andWhere("product.name LIKE :name")
-            ->setParameter("name", "%".$name."%")
+            ->setParameter("name", "%" . $name . "%")
+
+            ->setFirstResult($itemsPerPage * ($page - 1))
+            ->setMaxResults($itemsPerPage)
+
             ->getQuery()
             ->getResult();
     }
