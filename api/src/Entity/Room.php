@@ -5,8 +5,8 @@ namespace App\Entity;
 use App\Repository\RoomRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use JsonSerializable;
-use mysql_xdevapi\Exception;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 class Room implements JsonSerializable
@@ -144,6 +144,7 @@ class Room implements JsonSerializable
     /**
      * @param string $price
      * @return $this
+     * @throws Exception
      */
     public function setPrice(string $price): self
     {
