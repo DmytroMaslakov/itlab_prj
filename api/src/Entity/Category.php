@@ -29,7 +29,7 @@ class Category implements JsonSerializable
     /**
      * @var string|null
      */
-    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: '0')]
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: '0')]
     private ?string $minPrice = null;
 
     /**
@@ -41,7 +41,7 @@ class Category implements JsonSerializable
     /**
      * @var string|null
      */
-    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: '0')]
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: '0')]
     private ?string $maxPrice = null;
 
     /**

@@ -54,7 +54,7 @@ class CategoryController extends AbstractController
             ->setMinPrice($requestData['minPrice'])
             ->setMinPersons($requestData['minPersons'])
             ->setMaxPrice($requestData['maxPrice'])
-            ->setMinPersons($requestData['maxPersons']);
+            ->setMaxPersons($requestData['maxPersons']);
 
         $this->entityManager->persist($category);
 
@@ -117,7 +117,7 @@ class CategoryController extends AbstractController
             ->setMinPrice($requestData['minPrice'])
             ->setMinPersons($requestData['minPersons'])
             ->setMaxPrice($requestData['maxPrice'])
-            ->setMinPersons($requestData['maxPersons']);
+            ->setMaxPersons($requestData['maxPersons']);
 
         $this->entityManager->flush();
 

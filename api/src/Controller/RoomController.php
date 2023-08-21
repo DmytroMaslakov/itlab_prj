@@ -58,7 +58,7 @@ class RoomController extends AbstractController
 
         $room
             ->setName($requestData['name'])
-            ->setCategory($requestData['category'])
+            ->setCategory($category)
             ->setPrice($requestData['price'])
             ->setFloorNumber($requestData['floorNumber'])
             ->setIsBooked($requestData['isBooked']);
@@ -91,6 +91,32 @@ class RoomController extends AbstractController
         $room = $this->entityManager->getRepository(Room::class)->find($id);
 
         return new JsonResponse($room, Response::HTTP_OK);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    #[Route('room-params', name: 'get_all_rooms_by_params', methods: ["GET"])]
+    public function getByParams(Request $request): JsonResponse
+    {
+        $requestData = $request->query->all();
+
+        $rooms = $this->entityManager->getRepository(Room::class)->getAllRoomsByParams(
+            $requestData['itemsPerPage'] ?? 10,
+            $requestData['page'] ?? 1,
+            $requestData['name'] ?? '%',
+            $requestData['categoryName'] ?? '%',
+            $requestData['price'] ?? '%',
+            $requestData['floorNumber'] ?? '%',
+            $requestData['isBooked'] ?? '%',
+            $requestData['minPrice'] ?? '%',
+            $requestData['minPersons'] ?? '%',
+            $requestData['maxPrice'] ?? '%',
+            $requestData['maxPersons'] ?? '%'
+        );
+
+        return new JsonResponse($rooms, Response::HTTP_OK);
     }
 
     /**

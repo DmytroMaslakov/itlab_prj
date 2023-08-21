@@ -6,6 +6,7 @@ use App\Repository\RoomRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use mysql_xdevapi\Exception;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 class Room implements JsonSerializable
@@ -27,7 +28,7 @@ class Room implements JsonSerializable
     /**
      * @var string|null
      */
-    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: '0')]
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: '0')]
     private ?string $price = null;
 
     /**
@@ -146,7 +147,11 @@ class Room implements JsonSerializable
      */
     public function setPrice(string $price): self
     {
-        $this->price = $price;
+        if($price>=$this->category->getMinPrice() && $price<=$this->category->getMaxPrice()){
+            $this->price = $price;
+        }else{
+            throw new Exception('Price must be between max and min price due to category');
+        }
 
         return $this;
     }
@@ -158,6 +163,7 @@ class Room implements JsonSerializable
     {
         return [
             'id'          => $this->getId(),
+            'name'        =>$this->getName(),
             'category'    => $this->getCategory(),
             'price'       => $this->getPrice(),
             'floorNumber' => $this->getFloorNumber(),
