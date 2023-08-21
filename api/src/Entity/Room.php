@@ -5,9 +5,10 @@ namespace App\Entity;
 use App\Repository\RoomRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
-class Room
+class Room implements JsonSerializable
 {
     /**
      * @var int|null
@@ -150,4 +151,17 @@ class Room
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'          => $this->getId(),
+            'category'    => $this->getCategory(),
+            'price'       => $this->getPrice(),
+            'floorNumber' => $this->getFloorNumber(),
+            'isBooked'    => $this->getIsBooked()
+        ];
+    }
 }
