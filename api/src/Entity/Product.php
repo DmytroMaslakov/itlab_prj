@@ -113,8 +113,6 @@ class Product implements JsonSerializable
         ];
     }
 
-
-
     /**
      * @return Collection
      */
