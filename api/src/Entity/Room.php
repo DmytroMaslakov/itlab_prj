@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RoomRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
@@ -48,6 +50,39 @@ class Room implements JsonSerializable
      */
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "rooms")]
     private ?Category $category = null;
+
+    /**
+     * @var Collection
+     */
+    #[ORM\OneToMany(mappedBy: "room", targetEntity: Order::class)]
+    private Collection $order;
+
+    /**
+     * Room constructor
+     */
+    public function __construct()
+    {
+        $this->order = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOrder(): Collection
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param Collection $order
+     * @return $this
+     */
+    public function setOrder(Collection $order): self
+    {
+        $this->order = $order;
+
+        return $this;
+    }
 
     /**
      * @return int|null
