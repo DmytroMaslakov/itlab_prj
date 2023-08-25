@@ -5,11 +5,13 @@ namespace App\Entity;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
-class Order
+class Order implements JsonSerializable
 {
     /**
      * @var int|null
@@ -18,6 +20,12 @@ class Order
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: '0')]
+    private ?string $price = null;
 
     /**
      * @var Room|null
@@ -77,4 +85,35 @@ class Order
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param string|null $price
+     * @return $this
+     */
+    public function setPrice(?string $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            "id"    => $this->getId(),
+            "user"  => $this->getUser(),
+            "room"  => $this->getRoom(),
+            "price" => $this->getPrice()
+        ];
+    }
 }
