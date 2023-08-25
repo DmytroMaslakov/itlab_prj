@@ -7,6 +7,7 @@ use App\Entity\Room;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +36,7 @@ class RoomController extends AbstractController
      * @throws Exception
      */
     #[Route('room', name: 'create_room', methods: ["POST"])]
+    #[IsGranted("ROLE_ADMIN")]
     public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
@@ -92,33 +94,6 @@ class RoomController extends AbstractController
 
         return new JsonResponse($room, Response::HTTP_OK);
     }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    #[Route('room-params', name: 'get_all_rooms_by_params', methods: ["GET"])]
-    public function getByParams(Request $request): JsonResponse
-    {
-        $requestData = $request->query->all();
-
-        $rooms = $this->entityManager->getRepository(Room::class)->getAllRoomsByParams(
-            $requestData['itemsPerPage'] ?? 10,
-            $requestData['page'] ?? 1,
-            $requestData['name'] ?? '%',
-            $requestData['categoryName'] ?? '%',
-            $requestData['price'] ?? '%',
-            $requestData['floorNumber'] ?? '%',
-            $requestData['isBooked'] ?? '%',
-            $requestData['minPrice'] ?? '%',
-            $requestData['minPersons'] ?? '%',
-            $requestData['maxPrice'] ?? '%',
-            $requestData['maxPersons'] ?? '%'
-        );
-
-        return new JsonResponse($rooms, Response::HTTP_OK);
-    }
-
     /**
      * @param string $id
      * @param Request $request
@@ -126,6 +101,7 @@ class RoomController extends AbstractController
      * @throws Exception
      */
     #[Route('room/{id}', name: 'update_room', methods: ["PUT"])]
+    #[IsGranted("ROLE_ADMIN")]
     public function update(string $id, Request $request): JsonResponse
     {
         $room = $this->entityManager->getRepository(Room::class)->find($id);
@@ -169,6 +145,7 @@ class RoomController extends AbstractController
      * @throws Exception
      */
     #[Route('room/{id}', name: 'delete_room', methods: ["DELETE"])]
+    #[IsGranted("ROLE_ADMIN")]
     public function delete(string $id): JsonResponse
     {
         $room = $this->entityManager->getRepository(Room::class)->find($id);
@@ -180,6 +157,6 @@ class RoomController extends AbstractController
         $this->entityManager->remove($room);
         $this->entityManager->flush();
 
-        return new JsonResponse(Response::HTTP_NO_CONTENT);
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
 }
