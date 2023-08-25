@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Security;
 
 class OrderController extends AbstractController
@@ -132,7 +133,7 @@ class OrderController extends AbstractController
         $order = $this->entityManager->getRepository(Order::class)->find($id);
 
         if (!$order || $order->getUser()->getEmail() !== $this->security->getUser()->getUserIdentifier()) {
-            throw new Exception('Order with id ' . $id . ' not found');
+            throw new AccessDeniedException();
         }
 
         $requestData = json_decode($request->getContent(), true);
@@ -176,7 +177,7 @@ class OrderController extends AbstractController
         $order = $this->entityManager->getRepository(Order::class)->find($id);
 
         if (!$order || $order->getUser()->getEmail() !== $this->security->getUser()->getUserIdentifier()) {
-            throw new Exception('Order with id ' . $id . ' not found');
+            throw new AccessDeniedException();
         }
 
         $this->entityManager->remove($order);
