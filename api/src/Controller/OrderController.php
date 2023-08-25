@@ -109,19 +109,6 @@ class OrderController extends AbstractController
 
     /**
      * @param string $id
-     * @return JsonResponse
-     */
-    #[Route('order/{id}', name: 'get_order_by_id', methods: ["GET"])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function getById(string $id): JsonResponse
-    {
-        $order = $this->entityManager->getRepository(Order::class)->find($id);
-
-        return new JsonResponse($order, Response::HTTP_OK);
-    }
-
-    /**
-     * @param string $id
      * @param Request $request
      * @return JsonResponse
      * @throws Exception
