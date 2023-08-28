@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,9 +30,11 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @throws Exception
+     * @param Request $request
+     * @return JsonResponse
      */
     #[Route('products', name: 'create_product', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
@@ -56,6 +59,9 @@ class ProductController extends AbstractController
         return new JsonResponse($product, Response::HTTP_CREATED);
     }
 
+    /**
+     * @return JsonResponse
+     */
     #[Route('products', name: 'read_product', methods: ["GET"])]
     public function read(): JsonResponse
     {
@@ -64,6 +70,10 @@ class ProductController extends AbstractController
         return new JsonResponse($products, Response::HTTP_OK);
     }
 
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
     #[Route('products/{id}', name: 'read_product_by_id', methods: ['GET'])]
     public function readById(string $id): JsonResponse
     {
@@ -76,7 +86,13 @@ class ProductController extends AbstractController
         return new JsonResponse($product, Response::HTTP_OK);
     }
 
+    /**
+     * @param string $id
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('products/{id}', name: 'update_product', methods: ['PUT'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function update(string $id, Request $request): JsonResponse
     {
         $product = $this->entityManager->getRepository(Product::class)->find($id);
@@ -105,7 +121,12 @@ class ProductController extends AbstractController
         return new JsonResponse($product, Response::HTTP_OK);
     }
 
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
     #[Route('products/{id}', name: 'delete_product', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function delete(string $id): JsonResponse
     {
         $product = $this->entityManager->getRepository(Product::class)->find($id);
@@ -117,6 +138,6 @@ class ProductController extends AbstractController
         $this->entityManager->remove($product);
         $this->entityManager->flush();
 
-        return new JsonResponse(Response::HTTP_NO_CONTENT);
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
 }

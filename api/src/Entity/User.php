@@ -13,6 +13,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSerializable
 {
+    public const ROLE_USER = "ROLE_USER";
+    public const ROLE_ADMIN = "ROLE_ADMIN";
+
     /**
      * @var int|null
      */
@@ -106,7 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -114,19 +117,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
-     * @see UserInterface
+     * @return array|string[]
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->roles;
     }
 
     /**
@@ -182,7 +181,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
     /**
      * @return null[]|string[]
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return [
             'email' => $this->getEmail(),
