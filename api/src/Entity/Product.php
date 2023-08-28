@@ -5,9 +5,10 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product
+class Product implements JsonSerializable
 {
     /**
      * @var int|null
@@ -98,5 +99,17 @@ class Product
         $this->description = $description;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name'        => $this->getName(),
+            'price'       => $this->getPrice(),
+            'description' => $this->getDescription()
+        ];
     }
 }
