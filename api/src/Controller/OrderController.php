@@ -74,8 +74,8 @@ class OrderController extends AbstractController
             throw new BadRequestException();
         }
 
-        foreach ($products as $product_id) {
-            $product = $this->entityManager->getRepository(Product::class)->find($product_id);
+        foreach ($products as $productId) {
+            $product = $this->entityManager->getRepository(Product::class)->find($productId);
             $order->addProduct($product);
         }
 
@@ -104,6 +104,7 @@ class OrderController extends AbstractController
     public function read(): JsonResponse
     {
         $orders = $this->entityManager->getRepository(Order::class)->findAll();
+
         $userOrders = $this->fetchedOrdersForUser($orders);
 
         return new JsonResponse($userOrders, Response::HTTP_OK);

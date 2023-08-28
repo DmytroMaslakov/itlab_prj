@@ -24,7 +24,6 @@ class Order implements JsonSerializable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[NotNull]
     private ?int $id = null;
 
     /**
