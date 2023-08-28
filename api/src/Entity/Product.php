@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
@@ -35,6 +37,50 @@ class Product implements JsonSerializable
      */
     #[ORM\Column(length: 255)]
     private ?string $description = null;
+
+    /**
+     * @var Collection|ArrayCollection
+     */
+    #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
+    private Collection $orders;
+
+    /**
+     * Product constructor
+     */
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    /**
+     * @param Collection $orders
+     * @return self
+     */
+    public function setOrders(Collection $orders): self
+    {
+        $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * @param Order $order
+     * @return $this
+     */
+    public function addOrder(Order $order): self
+    {
+        $this->orders->add($order);
+
+        return $this;
+    }
 
     /**
      * @return int|null

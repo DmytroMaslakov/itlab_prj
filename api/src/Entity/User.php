@@ -179,8 +179,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
         // $this->plainPassword = null;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return null[]|string[]
+     */
+    public function jsonSerialize() : array
     {
-        // TODO: Implement jsonSerialize() method.
+        return [
+            'email' => $this->getEmail(),
+        ];
     }
 }

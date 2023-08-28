@@ -7,10 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
-class Order
+class Order implements JsonSerializable
 {
     /**
      * @var int|null
@@ -35,7 +36,7 @@ class Order
     /**
      * @var Collection
      */
-    #[ORM\ManyToMany(targetEntity: Product::class)]
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'orders')]
     private Collection $products;
 
     /**
@@ -99,6 +100,19 @@ class Order
     }
 
     /**
+     * @param Product $product
+     * @return $this
+     */
+    public function addProduct(Product $product): self
+    {
+        $this->products [] = $product;
+
+        $product->addOrder($this);
+
+        return $this;
+    }
+
+    /**
      * @return string|null
      */
     public function getDescription(): ?string
@@ -134,5 +148,18 @@ class Order
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'user'        => $this->getUser(),
+            'products'    => $this->getProducts(),
+            'price'       => $this->getPrice(),
+            'description' => $this->getDescription()
+        ];
     }
 }

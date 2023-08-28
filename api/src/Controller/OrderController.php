@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
 use App\Entity\Product;
+use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ProductController extends AbstractController
+class OrderController extends AbstractController
 {
     /**
      * @var EntityManagerInterface
@@ -31,92 +35,103 @@ class ProductController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route('products', name: 'create_product', methods: ['POST'])]
+    #[Route('orders', name: 'create_order', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
-        if (!isset($requestData['name'],
+        if (!isset($requestData['user'],
+            $requestData['products'],
             $requestData['price'],
-            $requestData['description'])){
+            $requestData['description'])) {
             throw new BadRequestException();
         }
 
-        $product = new Product();
+        $order = new Order();
 
-        $product
-            ->setName($requestData['name'])
+        $user = $this->entityManager->getRepository(User::class)->find($requestData['user']);
+
+        if (!$user) {
+            throw new BadRequestException();
+        }
+
+        $products = new ArrayCollection();
+        foreach ($requestData['products'] as $product_id){
+            $product = $this->entityManager->getRepository(Product::class)->find($product_id);
+            $order->addProduct($product);
+        }
+
+        $order
+            ->setUser($user)
             ->setPrice($requestData['price'])
             ->setDescription($requestData['description']);
 
-        $this->entityManager->persist($product);
+        $this->entityManager->persist($order);
 
         $this->entityManager->flush();
 
-        return new JsonResponse($product, Response::HTTP_CREATED);
+        return new JsonResponse($order, Response::HTTP_CREATED);
     }
 
-    #[Route('products', name: 'read_product', methods: ["GET"])]
+    #[Route('orders', name: 'read_orders', methods: ["GET"])]
     public function read(): JsonResponse
     {
-        $products = $this->entityManager->getRepository(Product::class)->findAll();
+        $orders = $this->entityManager->getRepository(Order::class)->findAll();
 
-        return new JsonResponse($products, Response::HTTP_OK);
+        return new JsonResponse($orders, Response::HTTP_OK);
     }
 
-    #[Route('products/{id}', name: 'read_product_by_id', methods: ['GET'])]
+    #[Route('orders/{id}', name: 'read_order_by_id', methods: ['GET'])]
     public function readById(string $id): JsonResponse
     {
-        $product = $this->entityManager->getRepository(Product::class)->find($id);
+        $order = $this->entityManager->getRepository(Order::class)->find($id);
 
-        if(!$product){
+        if (!$order) {
             throw new NotFoundHttpException();
         }
 
-        return new JsonResponse($product, Response::HTTP_OK);
+        return new JsonResponse($order, Response::HTTP_OK);
     }
 
-    #[Route('products/{id}', name: 'update_product', methods: ['PUT'])]
+    #[Route('orders/{id}', name: 'update_orders', methods: ['PUT'])]
     public function update(string $id, Request $request): JsonResponse
     {
-        $product = $this->entityManager->getRepository(Product::class)->find($id);
+        $order = $this->entityManager->getRepository(Order::class)->find($id);
 
-        if(!$product){
+        if (!$order) {
             throw new NotFoundHttpException();
         }
 
         $requestData = json_decode($request->getContent(), true);
 
-        if(!isset(
-            $requestData['name'],
+        if (!isset(
             $requestData['price'],
             $requestData['description']
-        )){
+        )) {
             throw new BadRequestException();
         }
 
-        $product
-            ->setName($requestData['name'])
+        $order
             ->setPrice($requestData['price'])
             ->setDescription($requestData['description']);
 
         $this->entityManager->flush();
 
-        return new JsonResponse($product, Response::HTTP_OK);
+        return new JsonResponse($order, Response::HTTP_OK);
     }
 
-    #[Route('products/{id}', name: 'delete_product', methods: ['DELETE'])]
+    #[Route('orders/{id}', name: 'delete_order', methods: ['DELETE'])]
     public function delete(string $id): JsonResponse
     {
-        $product = $this->entityManager->getRepository(Product::class)->find($id);
+        $order = $this->entityManager->getRepository(Order::class)->find($id);
 
-        if(!$product){
+        if (!$order) {
             throw new NotFoundHttpException();
         }
 
-        $this->entityManager->remove($product);
+        $this->entityManager->remove($order);
         $this->entityManager->flush();
 
-        return new JsonResponse(Response::HTTP_NO_CONTENT);
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
 }
