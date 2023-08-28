@@ -63,6 +63,9 @@ class OrderController extends AbstractController
     {
         $requestData = json_decode($request->getContent(), true);
 
+        $products = $requestData['products'];
+        unset($requestData['products']);
+
         $order = $this->denormalizer->denormalize($requestData, Order::class,"array");
 
         $user = $this->getUser();
@@ -71,8 +74,7 @@ class OrderController extends AbstractController
             throw new BadRequestException();
         }
 
-        $products = new ArrayCollection();
-        foreach ($requestData['products'] as $product_id) {
+        foreach ($products as $product_id) {
             $product = $this->entityManager->getRepository(Product::class)->find($product_id);
             $order->addProduct($product);
         }
@@ -81,8 +83,12 @@ class OrderController extends AbstractController
             ->setUser($user)
             ->setPrice($requestData['price'])
             ->setDescription($requestData['description']);
+
         $errors = $this->validator->validate($order);
 
+        if(count($errors)>0){
+            return new JsonResponse((string)$errors);
+        }
         $this->entityManager->persist($order);
 
         $this->entityManager->flush();
