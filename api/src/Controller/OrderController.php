@@ -18,6 +18,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OrderController extends AbstractController
 {
@@ -25,18 +28,34 @@ class OrderController extends AbstractController
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $entityManager;
+    /**
+     * @var DenormalizerInterface
+     */
+    private DenormalizerInterface $denormalizer;
+    /**
+     * @var ValidatorInterface
+     */
+    private ValidatorInterface $validator;
 
     /**
      * @param EntityManagerInterface $entityManager
+     * @param DenormalizerInterface $denormalizer
+     * @param ValidatorInterface $validator
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        DenormalizerInterface  $denormalizer,
+        ValidatorInterface     $validator)
     {
         $this->entityManager = $entityManager;
+        $this->denormalizer = $denormalizer;
+        $this->validator = $validator;
     }
 
     /**
      * @param Request $request
      * @return JsonResponse
+     * @throws ExceptionInterface
      */
     #[Route('orders', name: 'create_order', methods: ['POST'])]
     #[IsGranted("ROLE_USER")]
@@ -44,14 +63,7 @@ class OrderController extends AbstractController
     {
         $requestData = json_decode($request->getContent(), true);
 
-        if (!isset(
-            $requestData['products'],
-            $requestData['price'],
-            $requestData['description'])) {
-            throw new BadRequestException();
-        }
-
-        $order = new Order();
+        $order = $this->denormalizer->denormalize($requestData, Order::class,"array");
 
         $user = $this->getUser();
 
@@ -60,7 +72,7 @@ class OrderController extends AbstractController
         }
 
         $products = new ArrayCollection();
-        foreach ($requestData['products'] as $product_id){
+        foreach ($requestData['products'] as $product_id) {
             $product = $this->entityManager->getRepository(Product::class)->find($product_id);
             $order->addProduct($product);
         }
@@ -69,6 +81,7 @@ class OrderController extends AbstractController
             ->setUser($user)
             ->setPrice($requestData['price'])
             ->setDescription($requestData['description']);
+        $errors = $this->validator->validate($order);
 
         $this->entityManager->persist($order);
 
@@ -94,11 +107,12 @@ class OrderController extends AbstractController
      * @param array $orders
      * @return array
      */
-    public function fetchedOrdersForUser(array $orders):array{
+    public function fetchedOrdersForUser(array $orders): array
+    {
         $userOrders = [];
         foreach ($orders as $order) {
-            if($order->getUser()->getEmail() === $this->getUser()->getUserIdentifier()){
-                $userOrders []= $order;
+            if ($order->getUser()->getEmail() === $this->getUser()->getUserIdentifier()) {
+                $userOrders [] = $order;
             }
         }
         return $userOrders;

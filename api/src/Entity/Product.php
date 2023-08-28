@@ -5,11 +5,16 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Validator\Constraints\Product as ProductConstraint;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ProductConstraint]
 class Product implements JsonSerializable
 {
     /**
@@ -18,17 +23,21 @@ class Product implements JsonSerializable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[NotNull]
     private ?int $id = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $name = null;
 
     /**
      * @var string|null
      */
+    #[GreaterThan(value: 0)]
+    #[NotNull]
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: '0')]
     private ?string $price = null;
 
@@ -36,12 +45,14 @@ class Product implements JsonSerializable
      * @var string|null
      */
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $description = null;
 
     /**
      * @var Collection|ArrayCollection
      */
     #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
+    #[NotNull]
     private Collection $orders;
 
     /**

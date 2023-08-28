@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductController extends AbstractController
 {
@@ -20,13 +22,26 @@ class ProductController extends AbstractController
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $entityManager;
+    /**
+     * @var DenormalizerInterface
+     */
+    private DenormalizerInterface $denormalizer;
+    /**
+     * @var ValidatorInterface
+     */
+    private ValidatorInterface $validator;
 
     /**
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        DenormalizerInterface  $denormalizer,
+        ValidatorInterface     $validator)
     {
         $this->entityManager = $entityManager;
+        $this->denormalizer = $denormalizer;
+        $this->validator = $validator;
     }
 
     /**
@@ -39,13 +54,9 @@ class ProductController extends AbstractController
     {
         $requestData = json_decode($request->getContent(), true);
 
-        if (!isset($requestData['name'],
-            $requestData['price'],
-            $requestData['description'])){
-            throw new BadRequestException();
-        }
+        $product = $this->denormalizer->denormalize($requestData, Product::class, "array");
 
-        $product = new Product();
+        $errors = $this->validator->validate($product);
 
         $product
             ->setName($requestData['name'])
@@ -79,7 +90,7 @@ class ProductController extends AbstractController
     {
         $product = $this->entityManager->getRepository(Product::class)->find($id);
 
-        if(!$product){
+        if (!$product) {
             throw new NotFoundHttpException();
         }
 
@@ -97,17 +108,17 @@ class ProductController extends AbstractController
     {
         $product = $this->entityManager->getRepository(Product::class)->find($id);
 
-        if(!$product){
+        if (!$product) {
             throw new NotFoundHttpException();
         }
 
         $requestData = json_decode($request->getContent(), true);
 
-        if(!isset(
+        if (!isset(
             $requestData['name'],
             $requestData['price'],
             $requestData['description']
-        )){
+        )) {
             throw new BadRequestException();
         }
 
@@ -131,7 +142,7 @@ class ProductController extends AbstractController
     {
         $product = $this->entityManager->getRepository(Product::class)->find($id);
 
-        if(!$product){
+        if (!$product) {
             throw new NotFoundHttpException();
         }
 
