@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -13,31 +14,59 @@ use App\Validator\Constraints\ProductConstraint;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ProductConstraint]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            "method"   => "GET",
+        ]
+    ],
+    itemOperations: [
+        "get" => [
+            "method" => "GET"
+        ]
+    ],
+    attributes: [
+        "security" => "is_granted('".User::ROLE_ADMIN."')"
+    ]
+)]
 class Product implements JsonSerializable
 {
+    /**
+     * @var int|null
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    /**
+     * @var string|null
+     */
     #[ORM\Column(length: 255)]
     #[NotBlank]
     #[NotNull]
     private ?string $name = null;
 
+    /**
+     * @var string|null
+     */
     #[ORM\Column(type: Types::DECIMAL, precision: 2, scale: '0')]
     private ?string $price = null;
 
+    /**
+     * @var string|null
+     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "products")]
-    private ?Category $category = null;
+    /*    /**
+         * @var Category|null
 
+        #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "products")]
+        private ?Category $category = null;
 
-    #[ORM\ManyToMany(targetEntity: Test::class)]
-    private Collection $test;
-
+        #[ORM\ManyToMany(targetEntity: Test::class)]
+        private Collection $test;*/
 
 
     /**
@@ -111,50 +140,39 @@ class Product implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            "id" => $this->getId(),
-            "name" => $this->getName(),
-            "price" => $this->getPrice(),
+            "id"          => $this->getId(),
+            "name"        => $this->getName(),
+            "price"       => $this->getPrice(),
             "description" => $this->getDescription(),
-            "category" => $this->getCategory()
+            //"category" => $this->getCategory()
         ];
     }
+    /*
 
-    /**
-     * @return Collection
-     */
-    public function getTest(): Collection
-    {
-        return $this->test;
-    }
+        public function getTest(): Collection
+        {
+            return $this->test;
+        }
 
-    /**
-     * @param Collection $test
-     * @return $this
-     */
-    public function setTest(Collection $test): self
-    {
-        $this->test = $test;
-        return $this;
-    }
 
-    /**
-     * @return Category|null
-     */
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
+        public function setTest(Collection $test): self
+        {
+            $this->test = $test;
+            return $this;
+        }
 
-    /**
-     * @param Category|null $category
-     * @return $this
-     */
-    public function setCategory(?Category $category): self
-    {
-        $this->category = $category;
+        public function getCategory(): ?Category
+        {
+            return $this->category;
+        }
 
-        return $this;
-    }
+
+        public function setCategory(?Category $category): self
+        {
+            $this->category = $category;
+
+            return $this;
+        }*/
 
 
 }
