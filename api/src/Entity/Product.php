@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,6 +16,30 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ProductConstraint]
+#[ApiResource(
+    collectionOperations: [
+        "get"  => [
+            "method" => "GET"
+        ],
+        "post" => [
+            "method"   => "POST",
+            "security" => "is_granted('" . User::ROLE_ADMIN . "')"
+        ]
+    ],
+    itemOperations: [
+        "get"    => [
+            "method" => "GET"
+        ],
+        "put"    => [
+            "method" => "PUT",
+            "security" => "is_granted('" . User::ROLE_ADMIN . "')"
+        ],
+        "delete" => [
+            "method" => "DELETE",
+            "security" => "is_granted('" . User::ROLE_ADMIN . "')"
+        ]
+    ]
+)]
 class Product implements JsonSerializable
 {
     /**
@@ -23,7 +48,6 @@ class Product implements JsonSerializable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[NotNull]
     private ?int $id = null;
 
     /**
@@ -31,12 +55,12 @@ class Product implements JsonSerializable
      */
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[NotNull]
     private ?string $name = null;
 
     /**
      * @var string|null
      */
-    #[GreaterThan(value: 0)]
     #[NotNull]
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: '0')]
     private ?string $price = null;
@@ -48,35 +72,35 @@ class Product implements JsonSerializable
     #[NotBlank]
     private ?string $description = null;
 
-/*
-    #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
-    #[NotNull]
-    private Collection $orders;
+    /*
+        #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
+        #[NotNull]
+        private Collection $orders;
 
 
-    public function __construct()
-    {
-        $this->orders = new ArrayCollection();
-    }
+        public function __construct()
+        {
+            $this->orders = new ArrayCollection();
+        }
 
-    public function getOrders(): Collection
-    {
-        return $this->orders;
-    }
+        public function getOrders(): Collection
+        {
+            return $this->orders;
+        }
 
-    public function setOrders(Collection $orders): self
-    {
-        $this->orders = $orders;
+        public function setOrders(Collection $orders): self
+        {
+            $this->orders = $orders;
 
-        return $this;
-    }
+            return $this;
+        }
 
-    public function addOrder(Order $order): self
-    {
-        $this->orders->add($order);
+        public function addOrder(Order $order): self
+        {
+            $this->orders->add($order);
 
-        return $this;
-    }*/
+            return $this;
+        }*/
 
     /**
      * @return int|null

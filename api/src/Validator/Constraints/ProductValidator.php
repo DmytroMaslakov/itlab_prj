@@ -2,6 +2,8 @@
 
 namespace App\Validator\Constraints;
 
+use Exception;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -15,6 +17,7 @@ class ProductValidator extends ConstraintValidator
      * @param $value
      * @param Constraint $constraint
      * @return void
+     * @throws Exception
      */
     public function validate($value, Constraint $constraint): void
     {
@@ -26,6 +29,16 @@ class ProductValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, \App\Entity\Product::class);
         }
 
-        $this->context->addViolation("Error");
+        if(strlen($value->getName()) < 5){
+            throw new Exception("Name length can not be less than 5 characters");
+        }
+
+        if(intval($value->getPrice()) > 99){
+            throw new Exception("Price can not be greater than 99!");
+        }
+
+        if(intval($value->getPrice()) <10){
+            throw new Exception("Price can not be less than 10");
+        }
     }
 }
