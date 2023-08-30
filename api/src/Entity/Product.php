@@ -48,33 +48,22 @@ class Product implements JsonSerializable
     #[NotBlank]
     private ?string $description = null;
 
-    /**
-     * @var Collection|ArrayCollection
-     */
+/*
     #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
     #[NotNull]
     private Collection $orders;
 
-    /**
-     * Product constructor
-     */
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
     }
 
-    /**
-     * @return Collection
-     */
     public function getOrders(): Collection
     {
         return $this->orders;
     }
 
-    /**
-     * @param Collection $orders
-     * @return self
-     */
     public function setOrders(Collection $orders): self
     {
         $this->orders = $orders;
@@ -82,16 +71,12 @@ class Product implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @param Order $order
-     * @return $this
-     */
     public function addOrder(Order $order): self
     {
         $this->orders->add($order);
 
         return $this;
-    }
+    }*/
 
     /**
      * @return int|null

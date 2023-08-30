@@ -48,40 +48,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
     #[ORM\Column]
     #[NotBlank]
     private ?string $password = null;
-
-    /**
-     * @var Collection
-     */
+/*
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
     #[NotNull]
     private Collection $orders;
 
-    /**
-     * User constructor
-     */
-    public function __construct()
+
+   public function __construct()
     {
         $this->orders = new ArrayCollection();
     }
 
-    /**
-     * @return Collection
-     */
+
     public function getOrders(): Collection
     {
         return $this->orders;
     }
 
-    /**
-     * @param Collection $orders
-     * @return $this
-     */
+
     public function setOrders(Collection $orders): self
     {
         $this->orders = $orders;
 
         return $this;
-    }
+    }*/
 
     /**
      * @return int|null
