@@ -44,7 +44,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $rowCount = 5;
         $sth1 = $pdo->query('SELECT COUNT(*) FROM news');
         $reqCount = intval($sth1->fetch()[0]);
-        $pageNum = $_GET['page'] ?? 1;
+        $pageNum = $_GET['Index'] ?? 1;
         $currentPage = ($pageNum-1) * $rowCount;
         $sth = $pdo->query("SELECT * FROM news LIMIT {$currentPage}, {$rowCount}");
 

@@ -8,6 +8,6 @@ class SiteController extends Controller
 
     function index()
     {
-        echo "Main page!";
+        echo "Main Index!";
     }
 }
