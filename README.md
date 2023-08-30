@@ -93,4 +93,4 @@ PhpMyAdmin & MySQL database only work in `local` version. Don't forget to start 
 
 * [Main page (ReactJS)](https://courselab.com)
 * [Main page (Symfony)](https://courselab.com/api)
-* [PhpMyAdmin](https://courselab.com:8080)
+* [PhpMyAdmin](https://courselab.com:8443)
